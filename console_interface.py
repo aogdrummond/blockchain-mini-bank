@@ -1,13 +1,15 @@
 DEPOSIT_DIGIT = 1
 WITHDRAW_DIGIT = 2
 EXTRACT_AND_BALANCE_DIGIT = 3
-EXIT_DIGIT = 4
+EXCHANGE_RATE_DIGIT = 4
+EXIT_DIGIT = 5
 
 menu_options = {
     DEPOSIT_DIGIT: "Deposit",
     WITHDRAW_DIGIT: "Withdraw",
     EXTRACT_AND_BALANCE_DIGIT: "Extract and Balance",
-    EXIT_DIGIT: "Exit",
+    EXCHANGE_RATE_DIGIT: "Check Exchange Rates",
+    EXIT_DIGIT: "Exit"
 }
 
 
@@ -77,6 +79,12 @@ def run_chosen_operation(client, option: int):
 
     if option == EXTRACT_AND_BALANCE_DIGIT:
         client.extract_and_balance()
+        client.is_online = client_do_another_operation()
+        return client
+
+    if option == EXCHANGE_RATE_DIGIT:
+        
+        client.exchange_tool.get_rate()
         client.is_online = client_do_another_operation()
         return client
 

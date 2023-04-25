@@ -1,28 +1,31 @@
+import json
+import requests
 from datetime import datetime
 from db_interface import dB_Cursor
-from utils import get_smallest_notes_combination, CPF_digits, is_valid_CPF
+from utils import get_smallest_notes_combination, ID_digits, is_valid_ID
 
 cursor = dB_Cursor()
 cursor.setup_db()
 
 
 class Client:
-    def __init__(self, CPF: str):
+    def __init__(self, ID: str):
 
-        if not is_valid_CPF(CPF):
-            raise Exception("\n CPF must contain exactly 11 numeric digits")
+        if not is_valid_ID(ID):
+            raise Exception("\n ID must contain exactly 11 numeric digits")
 
-        self.CPF = CPF_digits(CPF)
+        self.ID = ID_digits(ID)
 
-        if not cursor.client_exists(self.CPF):
-            cursor.create_new_client(self.CPF)
+        if not cursor.client_exists(self.ID):
+            cursor.create_new_client(self.ID)
 
-        self.id = cursor.search_id_from_CPF(self.CPF)
+        self.id = cursor.search_id_from_ID(self.ID)
         self.is_online = True
+        self.exchange_tool = ExchangeTool()
 
     def deposit(self, value: int):
 
-        if self.CPF_corresponds():
+        if self.ID_corresponds():
 
             try:
 
@@ -39,7 +42,7 @@ class Client:
 
     def withdraw(self, value: int):
 
-        if self.CPF_corresponds():
+        if self.ID_corresponds():
 
             try:
 
@@ -80,7 +83,7 @@ class Client:
         and reports it in the console
         """
 
-        if self.CPF_corresponds():
+        if self.ID_corresponds():
 
             extract = cursor.obtain_extract(id=self.id)
             balance = cursor.calculates_balance(id=self.id)
@@ -100,29 +103,29 @@ class Client:
         print("Balance:", balance, "reais")
         print("")
 
-    def CPF_corresponds(self) -> bool:
+    def ID_corresponds(self) -> bool:
         """
-        Double-checks client's CPF before operation
+        Double-checks client's ID before operation
         to validate the user
         """
 
-        CPF = CPF_digits(input("Type again your CPF for validation: "))
+        ID = ID_digits(input("Type again your ID for validation: "))
         try:
-            if not is_valid_CPF(CPF):
+            if not is_valid_ID(ID):
                 raise TypeError
 
-            if not CPF == self.CPF:
+            if not ID == self.ID:
                 raise ValueError
 
             return True
         except TypeError:
             print(
-                "\n CPF typed is not valid. CPF must contain exactly 11 numeric digits."
+                "\n ID typed is not valid. ID must contain exactly 11 numeric digits."
             )
             return False
 
         except ValueError:
-            print(" \n Inserted CPF does not correspond to registered.")
+            print(" \n Inserted ID does not correspond to registered.")
             return False
 
     def commit_to_db(self):
@@ -154,3 +157,35 @@ class Transaction:
             print(f"\n It was withdrawn {-self.value} reais from your account")
 
         print(f"\n Transaction finished at: {self.date}")
+
+class ExchangeTool:
+
+    def __init__(self):
+
+        self.api_root_url = "http://172.17.0.2:5000//exchange_rate/"
+        
+        
+    def get_rate(self):
+        
+        from_cur = input("From which currency? ['USD','EUR','JPY' ...] ")
+        to_cur = input("To which currency? ['USD','EUR','JPY' ...] ")
+        url = self.api_root_url + f"{from_cur}/{to_cur}"
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            json_response=json.loads(response.text)
+            if json_response["success"]:
+                quote = json_response["info"]["quote"]
+                unix_timestamp = json_response["info"]["timestamp"]
+                date = datetime.fromtimestamp(float(unix_timestamp)).date()
+                message = f"The exchange rate from {from_cur}" 
+                message +=f" to {to_cur} is {quote} on {date}. \n"
+                print("Exchange Rate: \n")
+                print(message)
+            
+            else:
+                json_response=json.loads(response.text)
+                message = json_response["error"]["info"]
+                print(message)
+        else:
+            print("Failed to obtain the exchange rate information.")

@@ -3,7 +3,7 @@ from console_interface import print_menu, run_chosen_operation
 
 if __name__ == "__main__":
 
-    client = factory.Client(input("\n Type your CPF:"))
+    client = factory.Client(input("\n Type your ID:"))
 
     while client.is_online:
 

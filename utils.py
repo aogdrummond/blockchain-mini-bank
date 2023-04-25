@@ -1,22 +1,22 @@
 from copy import deepcopy
 
 
-def CPF_digits(CPF: str) -> str:
+def ID_digits(ID: str) -> str:
     """
-    Remove special characters commonly inserted on CPF
-    """
-
-    return CPF.replace(".", "").replace("-", "").replace(" ", "")
-
-
-def is_valid_CPF(CPF: str) -> bool:
-    """
-    Checks whether inputed CPF is valid or not
+    Remove special characters commonly inserted on ID
     """
 
-    CPF = CPF_digits(CPF)
+    return ID.replace(".", "").replace("-", "").replace(" ", "")
 
-    return len(CPF) == 11 and CPF.isdigit()
+
+def is_valid_ID(ID: str) -> bool:
+    """
+    Checks whether inputed ID is valid or not
+    """
+
+    ID = ID_digits(ID)
+
+    return len(ID) == 11 and ID.isdigit()
 
 
 def get_smallest_notes_combination(

@@ -8,7 +8,7 @@ from mysql_querys import (
     QueryToCreateTrasactions,
 )
 
-mydb = mysql.connector.connect(host="localhost", user="usuario", password="senha")
+mydb = mysql.connector.connect(host="localhost", user="root", password="00000000")
 cursor = mydb.cursor()
 
 
@@ -58,7 +58,7 @@ class dB_Cursor:
 
         for i in range(1, 10):
             self.cursor.execute(
-                f"INSERT INTO Clients (CPF) VALUES (0102030405{str(i)})"
+                f"INSERT INTO Clients (ID) VALUES (0102030405{str(i)})"
             )
 
         self.cursor.execute(QueryToCreateTrasactions)
@@ -78,17 +78,17 @@ class dB_Cursor:
         self.cursor.execute(QueryToDropTransactions)
         self.cursor.execute(QueryToDropClients)
 
-    def create_new_client(self, CPF: str):
+    def create_new_client(self, ID: str):
 
-        cursor.execute(f"INSERT INTO Clients (CPF) VALUES('{CPF}')")
+        cursor.execute(f"INSERT INTO Clients (ID) VALUES('{ID}')")
         print("\n New client registered.")
 
-    def client_exists(self, CPF: str) -> bool:
+    def client_exists(self, ID: str) -> bool:
         """
         Check if there is a client registered on db with given
-        value of CPF.
+        value of ID.
         """
-        cursor.execute(f"SELECT * from Clients WHERE CPF={CPF};")
+        cursor.execute(f"SELECT * from Clients WHERE ID='{ID}';")
         return len(cursor.fetchall()) > 0
 
     def insert_transaction_in_db(self, value: int, date: str, client_id: int):
@@ -99,12 +99,12 @@ class dB_Cursor:
             f"INSERT INTO Transactions (value, date, client_id) VALUES({value},'{date}',{client_id})"
         )
 
-    def search_id_from_CPF(self, CPF: str) -> int:
+    def search_id_from_ID(self, ID: str) -> int:
         """
         Returns the primary key, client_id, for a sample in Clients
-        table where CPF equals searched value.
+        table where ID equals searched value.
         """
-        cursor.execute(f"SELECT client_id FROM Clients WHERE CPF={CPF}")
+        cursor.execute(f"SELECT client_id FROM Clients WHERE ID={ID}")
         return cursor.fetchall()[0][0]
 
     def obtain_extract(self, id: int) -> list:

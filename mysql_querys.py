@@ -1,5 +1,5 @@
-QueryToCreateClients = "CREATE TABLE IF NOT EXISTS Clients(CPF varchar(11),\
-                        client_id int AUTO_INCREMENT PRIMARY KEY, UNIQUE KEY(CPF));"
+QueryToCreateClients = "CREATE TABLE IF NOT EXISTS Clients(ID varchar(11),\
+                        client_id int AUTO_INCREMENT PRIMARY KEY, UNIQUE KEY(ID));"
 QueryToCreateTrasactions = "CREATE TABLE IF NOT EXISTS Transactions(value int NOT NULL,\
                             date datetime NOT NULL,transaction_id int AUTO_INCREMENT PRIMARY KEY NOT NULL,\
                             client_id int NOT NULL,UNIQUE KEY(transaction_id),\
