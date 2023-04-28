@@ -78,9 +78,12 @@ class dB_Cursor:
         self.cursor.execute(QueryToDropTransactions)
         self.cursor.execute(QueryToDropClients)
 
-    def create_new_client(self, ID: str):
+    def create_new_client(self, 
+                          ID: str, 
+                          public_key:str, 
+                          private_key:str):
 
-        cursor.execute(f"INSERT INTO Clients (ID) VALUES('{ID}')")
+        cursor.execute(f"INSERT INTO Clients (ID, public_key, private_key) VALUES('{ID}','{public_key}','{private_key}')")
         print("\n New client registered.")
 
     def client_exists(self, ID: str) -> bool:
@@ -91,12 +94,16 @@ class dB_Cursor:
         cursor.execute(f"SELECT * from Clients WHERE ID='{ID}';")
         return len(cursor.fetchall()) > 0
 
-    def insert_transaction_in_db(self, value: int, date: str, client_id: int):
+    def insert_transaction_in_db(self, 
+                                 value: int, 
+                                 date: str, 
+                                 client_id: int,
+                                 previous_hash: str):
         """
         Insert data of Transaction in Transactions table.
         """
         cursor.execute(
-            f"INSERT INTO Transactions (value, date, client_id) VALUES({value},'{date}',{client_id})"
+            f"INSERT INTO Transactions (value, date, client_id, hash) VALUES({value},'{date}',{client_id},'{previous_hash}')"
         )
 
     def search_id_from_ID(self, ID: str) -> int:
@@ -106,6 +113,27 @@ class dB_Cursor:
         """
         cursor.execute(f"SELECT client_id FROM Clients WHERE ID={ID}")
         return cursor.fetchall()[0][0]
+
+    def search_keys_from_id(self, ID: str) -> str:
+        """
+        """
+        cursor.execute(f"SELECT public_key, private_key FROM Clients WHERE client_id='{ID}'")
+        query_payload = cursor.fetchall()[0]
+        return {"public":query_payload[0],"private":query_payload[1]}
+    
+    def search_transaction_previous_hash(self, id: str,initial:str = "0") -> str:
+        """
+        Checks last Transaction's hash, creating a default value if it
+        is the first one
+        """
+        cursor.execute(f"SELECT hash FROM Transactions WHERE client_id={id}")
+        previous_hash = cursor.fetchall()
+        if len(previous_hash) == 0:
+            requested_hash = initial
+        else:
+            requested_hash = previous_hash[0][-1]
+        return requested_hash
+
 
     def obtain_extract(self, id: int) -> list:
         """

@@ -1,12 +1,17 @@
-import json
-import requests
 from datetime import datetime
 from db_interface import dB_Cursor
 from utils import get_smallest_notes_combination, ID_digits, is_valid_ID
+from encryption_factory import Encryption
+from exchange import ExchangeTool
 
+encryptor = Encryption()
 cursor = dB_Cursor()
 cursor.setup_db()
 
+def create_new_client(ID:str):
+    public_key, private_key = encryptor.create_keys_pair()
+    cursor.create_new_client(ID,public_key, private_key)
+    cursor.commit()
 
 class Client:
     def __init__(self, ID: str):
@@ -17,11 +22,13 @@ class Client:
         self.ID = ID_digits(ID)
 
         if not cursor.client_exists(self.ID):
-            cursor.create_new_client(self.ID)
+            create_new_client(self.ID)
 
         self.id = cursor.search_id_from_ID(self.ID)
+        self.keys = cursor.search_keys_from_id(self.id)
         self.is_online = True
         self.exchange_tool = ExchangeTool()
+    
 
     def deposit(self, value: int):
 
@@ -73,7 +80,7 @@ class Client:
         if value == 0:
             raise ValueError("\n The value for a transaction must be not null")
 
-        new_transaction = Transaction(value=value, client_id=self.id)
+        new_transaction = Transaction(value=value, client_id=self.id,keys=self.keys)
 
         new_transaction.summary()
 
@@ -137,14 +144,23 @@ class Client:
 
 
 class Transaction:
-    def __init__(self, value: int, client_id: int):
+    def __init__(self, value: int, client_id: int, keys):
         self.value = value
         self.date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.client_id = client_id
+        self.keys = keys
 
-        cursor.insert_transaction_in_db(
-            value=self.value, date=self.date, client_id=self.client_id
-        )
+        data_package = {"value":self.value,"date":self.date,"id":self.client_id}
+
+        previous_hash = cursor.search_transaction_previous_hash(id=self.client_id)
+        transaction_hash = encryptor.encrypt_transaction(data=data_package,
+                                                         previous_hash=previous_hash,
+                                                         keys=self.keys)
+        cursor.insert_transaction_in_db(value=self.value, 
+                                        date=self.date, 
+                                        client_id=self.client_id,
+                                        previous_hash=transaction_hash)
+        
 
     def summary(self):
         """
@@ -158,34 +174,3 @@ class Transaction:
 
         print(f"\n Transaction finished at: {self.date}")
 
-class ExchangeTool:
-
-    def __init__(self):
-
-        self.api_root_url = "http://172.17.0.2:5000//exchange_rate/"
-        
-        
-    def get_rate(self):
-        
-        from_cur = input("From which currency? ['USD','EUR','JPY' ...] ")
-        to_cur = input("To which currency? ['USD','EUR','JPY' ...] ")
-        url = self.api_root_url + f"{from_cur}/{to_cur}"
-        response = requests.get(url)
-
-        if response.status_code == 200:
-            json_response=json.loads(response.text)
-            if json_response["success"]:
-                quote = json_response["info"]["quote"]
-                unix_timestamp = json_response["info"]["timestamp"]
-                date = datetime.fromtimestamp(float(unix_timestamp)).date()
-                message = f"The exchange rate from {from_cur}" 
-                message +=f" to {to_cur} is {quote} on {date}. \n"
-                print("Exchange Rate: \n")
-                print(message)
-            
-            else:
-                json_response=json.loads(response.text)
-                message = json_response["error"]["info"]
-                print(message)
-        else:
-            print("Failed to obtain the exchange rate information.")

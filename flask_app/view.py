@@ -19,7 +19,7 @@ def get_exchange_rate(from_currency,to_currency):
                                 headers={"apikey":API_Key}, 
                                 data = {})
     if response.status_code != 200:
-        raise Exception("Messagem de bad request")
+        raise Exception("Bad request message")
     
     return response.text
 

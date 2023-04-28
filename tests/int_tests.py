@@ -4,9 +4,11 @@ the connections between db and factory.
 """
 import sys
 from pathlib import Path
-
+import mock
+import pytest
+import builtins
 sys.path.append(str(Path(sys.path[0]).parent))
-
+import factory
 from db_interface import mydb, dB_Cursor
 from datetime import datetime
 
@@ -28,7 +30,7 @@ def test_create_table():
     test_cursor.cursor.execute("SHOW TABLES")
     n_final_tables = len(test_cursor.cursor.fetchall())
     test_cursor.drop_table(table_name="tab")
-
+    
     assert n_initial_tables < n_final_tables
 
 
@@ -40,7 +42,7 @@ def test_create_data():
     n_data = len(test_cursor.cursor.fetchall())
 
     test_cursor.drop_table(table_name="tab")
-
+    
     assert n_data > 0
 
 
@@ -82,6 +84,23 @@ def test_wrong_balance():
     received_balance = test_cursor.calculates_balance(mock_client_id)
     test_cursor.clean_database()
     assert not received_balance == expected_balance
+
+
+@mock.patch("builtins.input", return_value="USD")
+def test_happy_flask_app(*mock):
+
+    response_message = factory.ExchangeTool().get_rate()
+    message = "The exchange rate from USD to USD is 1"
+    assert message in response_message
+
+
+@mock.patch("builtins.input", return_value="WRONG")
+def test_unhappy_flask_app(*mock):
+
+    response_message = factory.ExchangeTool().get_rate()
+    message = "The exchange rate from USD to USD is 1"
+    with pytest.raises(TypeError):
+        assert message in response_message
 
 
 if __name__ == "__main__":
