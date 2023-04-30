@@ -98,12 +98,13 @@ class dB_Cursor:
                                  value: int, 
                                  date: str, 
                                  client_id: int,
-                                 previous_hash: str):
+                                 hash: str,
+                                 proof:int):
         """
         Insert data of Transaction in Transactions table.
         """
         cursor.execute(
-            f"INSERT INTO Transactions (value, date, client_id, hash) VALUES({value},'{date}',{client_id},'{previous_hash}')"
+            f"INSERT INTO Transactions (value, date, client_id, hash, proof) VALUES({value},'{date}',{client_id},'{hash}',{proof})"
         )
 
     def search_id_from_ID(self, ID: str) -> int:
@@ -121,7 +122,7 @@ class dB_Cursor:
         query_payload = cursor.fetchall()[0]
         return {"public":query_payload[0],"private":query_payload[1]}
     
-    def search_transaction_previous_hash(self, id: str,initial:str = "0") -> str:
+    def search_transaction_previous_hash(self, id: str, initial:str = "0") -> str:
         """
         Checks last Transaction's hash, creating a default value if it
         is the first one
@@ -131,9 +132,17 @@ class dB_Cursor:
         if len(previous_hash) == 0:
             requested_hash = initial
         else:
-            requested_hash = previous_hash[0][-1]
+            requested_hash = previous_hash[-1][0]
         return requested_hash
 
+    def obtain_all_transactions_data(self,client_id:int) -> bool:
+        """
+        """
+        query = "SELECT transaction_id, client_id, value,date,hash,proof FROM Transactions"
+        query += f" WHERE client_id={client_id} ORDER BY date ASC"
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return result
 
     def obtain_extract(self, id: int) -> list:
         """

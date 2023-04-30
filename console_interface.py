@@ -3,13 +3,15 @@ WITHDRAW_DIGIT = 2
 EXTRACT_AND_BALANCE_DIGIT = 3
 EXCHANGE_RATE_DIGIT = 4
 EXIT_DIGIT = 5
+TECHNICAL_SUPPORT_DIGIT = 0
 
 menu_options = {
     DEPOSIT_DIGIT: "Deposit",
     WITHDRAW_DIGIT: "Withdraw",
     EXTRACT_AND_BALANCE_DIGIT: "Extract and Balance",
     EXCHANGE_RATE_DIGIT: "Check Exchange Rates",
-    EXIT_DIGIT: "Exit"
+    EXIT_DIGIT: "Exit",
+    TECHNICAL_SUPPORT_DIGIT: "Technical Support - Check Blockchain Consistency"
 }
 
 
@@ -33,7 +35,7 @@ def confirm_operation(operation: str, value: int) -> bool:
             raise TypeError
 
         answer = input(
-            f"\n Are you sure you want to {operation} {value} reais?[y/n] "
+            f"\n Are you sure you want to {operation} {value} dollars?[y/n] "
         ).lower()
         return answer
 
@@ -90,6 +92,11 @@ def run_chosen_operation(client, option: int):
 
     if option == EXIT_DIGIT:
         client.is_online = False
+        return client
+
+    if option == TECHNICAL_SUPPORT_DIGIT:
+        client.verify_transactions_consistency()
+        client.is_online = client_do_another_operation
         return client
 
     else:

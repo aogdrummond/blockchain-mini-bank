@@ -42,10 +42,14 @@ class Client:
 
                 self.transact(value)
 
-            except:
-                print(
-                    "\n Only a positive value can be deposited. It must be an integer."
-                )
+            except Exception as e:
+                if type(e) == MemoryError:
+                    print("\n It could not be mined a value to enable this message. Operation canceled.")
+                    
+                else:    
+                    print(
+                        "\n Only a positive value can be deposited. It must be an integer."
+                    )
 
     def withdraw(self, value: int):
 
@@ -70,7 +74,6 @@ class Client:
 
             except ValueError:
                 print("\n Only a positive value can be withdrawn")
-
             except TypeError:
                 print("\n The value must be an integer.")
 
@@ -107,7 +110,7 @@ class Client:
         for transaction in extract:
             print(transaction[0], "                ", str(transaction[1]))
         print("")
-        print("Balance:", balance, "reais")
+        print("Balance:", balance, " dollars.")
         print("")
 
     def ID_corresponds(self) -> bool:
@@ -135,6 +138,30 @@ class Client:
             print(" \n Inserted ID does not correspond to registered.")
             return False
 
+    def verify_transactions_consistency(self):
+        """
+        """
+        # Obter todas as transações
+        transactions_data = cursor.obtain_all_transactions_data(self.id)
+        keys = cursor.search_keys_from_id(self.id)
+        hashes_recreated = encryptor.recreate_chain_hashes(transactions_data,keys)
+        is_consistent = True
+        for transaction,recreated_hash in zip(transactions_data,hashes_recreated):
+            if transaction[-2] != recreated_hash:
+                is_consistent = False
+                transaction_id = transaction[0]
+                continue
+        
+        if is_consistent:
+            print("")
+            print("The blockchain is consistent!")
+            print("")
+        else:
+            print("")
+            print(f"The blockchain is not consistent! \
+                   The error was found on transaction {transaction_id}.\n")
+            print("")
+
     def commit_to_db(self):
         """
         Commit local changes to database (send changes on console
@@ -153,20 +180,21 @@ class Transaction:
         data_package = {"value":self.value,"date":self.date,"id":self.client_id}
 
         previous_hash = cursor.search_transaction_previous_hash(id=self.client_id)
-        transaction_hash = encryptor.encrypt_transaction(data=data_package,
+        transaction_hash, proof = encryptor.encrypt_transaction(data=data_package,
                                                          previous_hash=previous_hash,
                                                          keys=self.keys)
+        
         cursor.insert_transaction_in_db(value=self.value, 
                                         date=self.date, 
                                         client_id=self.client_id,
-                                        previous_hash=transaction_hash)
+                                        hash=transaction_hash,
+                                        proof = proof)
         
 
     def summary(self):
         """
         Prints in the console the operation conducted
         """
-
         if self.value > 0:
             print(f"\n It was deposited {self.value} reais in your account")
         if self.value < 0:
