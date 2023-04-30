@@ -1,11 +1,11 @@
-DEPOSIT_DIGIT = 1
-WITHDRAW_DIGIT = 2
-EXTRACT_AND_BALANCE_DIGIT = 3
-EXCHANGE_RATE_DIGIT = 4
-EXIT_DIGIT = 5
-TECHNICAL_SUPPORT_DIGIT = 0
+DEPOSIT_DIGIT: int = 1
+WITHDRAW_DIGIT: int = 2
+EXTRACT_AND_BALANCE_DIGIT: int = 3
+EXCHANGE_RATE_DIGIT: int = 4
+EXIT_DIGIT: int = 5
+TECHNICAL_SUPPORT_DIGIT: int = 0
 
-menu_options = {
+menu_options: dict[int, str] = {
     DEPOSIT_DIGIT: "Deposit",
     WITHDRAW_DIGIT: "Withdraw",
     EXTRACT_AND_BALANCE_DIGIT: "Extract and Balance",
@@ -15,32 +15,27 @@ menu_options = {
 }
 
 
-def print_menu():
+def print_menu() -> None:
     """
     Prints the main menu in the console
     """
-    for key in menu_options.keys():
-        print(key, "--", menu_options[key])
+    for key, value in menu_options.items():
+        print(f"{key} -- {value}")
 
 
-def confirm_operation(operation: str, value: int) -> bool:
+def confirm_operation(operation: str, value: str) -> bool:
     """
     Asks the client to confirm the operation requested
     """
     try:
-        value = int(value)
-        if value <= 0:
+        value_int = int(value)
+        if value_int <= 0:
             raise ValueError
-        if type(value) != int:
-            raise TypeError
-
-        answer = input(
-            f"\n Are you sure you want to {operation} {value} dollars?[y/n] "
-        ).lower()
-        return answer
-
-    except:
+        answer = input(f"\n Are you sure you want to {operation} {value_int} dollars?[y/n] ").lower()
+        return answer == "y"
+    except (TypeError, ValueError):
         print("\n The value must be a positive integer.")
+        return False
 
 
 def client_do_another_operation() -> bool:
@@ -58,7 +53,7 @@ def client_do_another_operation() -> bool:
             print("\n The answer must be whether 'y'[yes] or 'n'[no].")
 
 
-def run_chosen_operation(client, option: int):
+def run_chosen_operation(client: object, option: int) -> object:
     """
     Decides action for the client to be taken and his/her
     state based on the chosen option
@@ -66,16 +61,16 @@ def run_chosen_operation(client, option: int):
     if option == DEPOSIT_DIGIT:
         value = input("\n How much do you want to deposit? ")
         confirmation = confirm_operation(operation="deposit", value=value)
-        if confirmation == "y":
-            client.deposit(value)
+        if confirmation:
+            client.deposit(int(value))
         client.is_online = client_do_another_operation()
         return client
 
     if option == WITHDRAW_DIGIT:
         value = input("\n How much do you want to withdraw? ")
         confirmation = confirm_operation(operation="withdraw", value=value)
-        if confirmation == "y":
-            client.withdraw(value)
+        if confirmation:
+            client.withdraw(int(value))
         client.is_online = client_do_another_operation()
         return client
 
@@ -85,7 +80,6 @@ def run_chosen_operation(client, option: int):
         return client
 
     if option == EXCHANGE_RATE_DIGIT:
-        
         client.exchange_tool.get_rate()
         client.is_online = client_do_another_operation()
         return client
@@ -96,9 +90,8 @@ def run_chosen_operation(client, option: int):
 
     if option == TECHNICAL_SUPPORT_DIGIT:
         client.verify_transactions_consistency()
-        client.is_online = client_do_another_operation
+        client.is_online = client_do_another_operation()
         return client
 
-    else:
-        print("\n You must choose one between currently available options. \n")
-        return client
+    print("\n You must choose one between currently available options. \n")
+    return client
