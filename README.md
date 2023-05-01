@@ -85,7 +85,24 @@ Tip: To acess the images available on DockerHub you need to be logged in to Dock
 
 
 ## **How to use**
-* ### To start it on your console, just run "main.py" file:
+
+
+* ### If you are interested on using Flask functionality, to get currency exchange rates start running flask_app/view.py application. Otherwise you may skip this phase.
+
+* ### Activate the API through the following command:
+```
+python3 flask_app/view.py
+```
+![Example of usage](img/running_flask.png)
+
+&nbsp;
+
+* ### Paste API's IP and port into .env file to adjust the environment variables
+
+![Example of usage](img/env_variables.png)
+
+
+* ### To start the application on your console, just run "main.py" file:
 
 ```
 python main.py
