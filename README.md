@@ -1,6 +1,6 @@
 # Blockchain Mini Bank
 
-### This software was developed as a practice to integrate different skills aiming to design an ATM's software, responsible for identifying the user and applying the right operations to withdrawn money, deposit money and manages the account.
+### This software was developed as a practice to integrate different skills aiming to design an ATM's software, responsible for identifying the user and applying the right operations to withdrawn money, deposit money and manages the account. It was then increased to allow real-time consultation of currency exchange rates and application of blockchain algorithms to ensure data consistency
 
 ## **Installation**
 
