@@ -11,10 +11,12 @@ services:
       - --collation-server=utf8mb4_unicode_ci
       - --innodb_force_recovery=0
     ports:
-      - 3306:3306
+      - 3309:3309
     environment:
-      MYSQL_ROOT_PASSWORD: senha
+      MYSQL_ROOT_PASSWORD: 00000000
       MYSQL_DATABASE: bank_db
-      MYSQL_USER: usuario
-      MYSQL_PASSWORD: senha
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 00000000
       TZ: America/Sao_Paulo
+
+  

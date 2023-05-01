@@ -9,35 +9,35 @@ from pathlib import Path
 sys.path.append(str(Path(sys.path[0]).parent))
 from unittest import mock
 from factory import Client
-from utils import CPF_digits, get_smallest_notes_combination, is_valid_CPF
+from utils import ID_digits, get_smallest_notes_combination, is_valid_ID
 
 
-def test_CPF_digits_filtering():
+def test_ID_digits_filtering():
 
-    CPF = [
+    ID = [
         ("999.999.999-99", "99999999999"),
         ("  99999999999 ", "99999999999"),
         ("99999999999", "99999999999"),
     ]
 
-    for cpf in CPF:
+    for ID in ID:
 
-        assert CPF_digits(cpf[0]) == cpf[1]
-
-
-def test_CPF_validation():
-
-    CPF = "99999999999"
-
-    assert is_valid_CPF(CPF) == True
+        assert ID_digits(ID[0]) == ID[1]
 
 
-def test_CPF_not_validation():
+def test_ID_validation():
 
-    invalid_CPFs = ["9999999999", "999999999999", "s999999999", "test"]
+    ID = "99999999999"
 
-    for cpf in invalid_CPFs:
-        assert not is_valid_CPF(cpf) == True
+    assert is_valid_ID(ID) == True
+
+
+def test_ID_not_validation():
+
+    invalid_IDs = ["9999999999", "999999999999", "s999999999", "test"]
+
+    for ID in invalid_IDs:
+        assert not is_valid_ID(ID) == True
 
 
 def test_right_notes_combination():
@@ -57,13 +57,13 @@ def test_right_notes_combination():
 
 # Dependency Injection to decouple from db for test
 class ClientMocker(Client):
-    def __init__(self, CPF):
-        self.CPF = CPF_digits(CPF)
+    def __init__(self, ID):
+        self.ID = ID_digits(ID)
         self.id = 99
         self.is_online = True
 
 
-def test_CPF_corresponds():
+def test_ID_corresponds():
 
     mock_data = [
         ("99999999999", "99999999999"),
@@ -71,19 +71,19 @@ def test_CPF_corresponds():
         ("999 999 999 99", "99999999999"),
     ]
 
-    for mock_CPF in mock_data:
+    for mock_ID in mock_data:
 
-        client = ClientMocker(mock_CPF[0])
-        with mock.patch("builtins.input", return_value=mock_CPF[1]):
-            assert client.CPF_corresponds()
+        client = ClientMocker(mock_ID[0])
+        with mock.patch("builtins.input", return_value=mock_ID[1]):
+            assert client.ID_corresponds()
 
 
 if __name__ == "__main__":
 
-    test_CPF_digits_filtering()
-    test_CPF_validation()
-    test_CPF_not_validation()
+    test_ID_digits_filtering()
+    test_ID_validation()
+    test_ID_not_validation()
     test_right_notes_combination()
-    test_CPF_corresponds()
+    test_ID_corresponds()
 
     print("All tests passed.")

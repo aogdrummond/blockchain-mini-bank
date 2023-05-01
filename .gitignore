@@ -1,0 +1,5 @@
+__pycache__
+.pytest_cache
+docker-desktop-4.12.0-amd64.deb
+*venv
+*.ipynb
