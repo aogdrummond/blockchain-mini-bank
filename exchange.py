@@ -29,7 +29,7 @@ class ExchangeTool:
             response = requests.get(url)
         except Exception as e:
             print("")
-            print("There is not connection to the API. Did you remember to run Flask container? ")
+            print("There is not connection to the API. Did you remember to run Flask application? ")
             print("")
             raise ConnectionError
                 

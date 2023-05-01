@@ -107,27 +107,6 @@ def test_wrong_balance():
     test_cursor.clean_database()
     assert not received_balance == expected_balance
 
-def fake_transaction(client_id):
-    """
-    """
-    value = random.uniform(-1000,1000)
-    date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    keys = test_cursor.search_keys_from_id(client_id)
-    data_package = {"value": value, "date": date, "id": client_id}
-    previous_hash = test_cursor.search_transaction_previous_hash(id=client_id)
-    transaction_hash, proof = encryptor.encrypt_transaction(
-        data=data_package, previous_hash=previous_hash, keys=keys
-    )
-
-    test_cursor.insert_transaction_in_db(value=value,
-                                         date=date,
-                                         client_id=client_id,
-                                         hash=transaction_hash,
-                                         proof=proof,
-    )
-    test_cursor.commit()
-
-
 def test_blockchain_consistency() -> None:
     """
     Test the consistency of transactions in the blockchain.
@@ -168,7 +147,7 @@ def test_unhappy_flask_app(*mock: Any) -> None:
     Test the Flask application with incorrect input.
     """
     response_message = factory.ExchangeTool().get_rate()
-    message = "The exchange rate from USD"
+    assert response_message == None
 
 if __name__ == "__main__":
 

@@ -21,9 +21,9 @@ def get_exchange_rate(from_currency: str, to_currency: str) -> str:
     Raises:
         Exception: If the API returns a bad request message.
     """
-    API_Key = os.environ.get("API_Key")
-    root_url = os.environ.get("API_url")
-    api_type = os.environ.get("API_type")
+    API_Key = os.environ.get("EXT_API_KEY")
+    root_url = os.environ.get("EXT_API_URL")
+    api_type = os.environ.get("EXT_API_TYPE")
     amount = 1
     endpoint = f"convert?to={from_currency}&from={to_currency}&amount={amount}"
     url = "/".join([root_url, api_type, endpoint]) 
