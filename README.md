@@ -130,3 +130,15 @@ pytest tests\int_tests.py
 ```
 
 * **Be aware, the automatted tests clean the whole database after execution.**
+
+### Updates on version 2.0
+
+1 - Blockchain encryption for consistency
+
+![Example of usage](img/database_hashes.png)
+
+* The unique hashes allow the blockchain to be promptly reassembled to ensure all the transactions are valid. If one of the transactions is changed direcly in the database, the hash created with differ from expected, warning an inconsistency message.
+
+2 - Real time exchange rate for various currencies:
+
+![Example of usage](img/currency_rate.png)
