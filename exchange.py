@@ -25,8 +25,14 @@ class ExchangeTool:
         from_cur = input("From which currency? ['USD', 'EUR', 'JPY' ...] ")
         to_cur = input("To which currency? ['USD', 'EUR', 'JPY' ...] ")
         url = f"{self.api_root_url}/{from_cur}/{to_cur}"
-        response = requests.get(url)
-
+        try:
+            response = requests.get(url)
+        except Exception as e:
+            print("")
+            print("There is not connection to the API. Did you remember to run Flask container? ")
+            print("")
+            raise ConnectionError
+                
         if response.status_code == 200:
             json_response = json.loads(response.text)
             if json_response["success"]:

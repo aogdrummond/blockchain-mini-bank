@@ -142,7 +142,7 @@ class Client:
             balance = cursor.calculates_balance(id=self.id)
             self.report_in_console(extract, balance)
 
-    def report_in_console(self, extract: List[Tuple[str, datetime.datetime]], balance: int) -> None:
+    def report_in_console(self, extract: List[Tuple[str, datetime]], balance: int) -> None:
         """
         Prints the report to the console
 
@@ -170,7 +170,7 @@ class Client:
             if not is_valid_ID(ID):
                 raise TypeError
 
-            if not ID == self.id:
+            if not ID == self.ID:
                 raise ValueError
 
             return True
@@ -188,7 +188,6 @@ class Client:
         """
         Verifies the consistency of the transactions in the blockchain
         """
-        # Obtain all transactions
         transactions_data = cursor.obtain_all_transactions_data(self.id)
         keys = cursor.search_keys_from_id(self.id)
         hashes_recreated = encryptor.recreate_chain_hashes(transactions_data, keys)
@@ -197,7 +196,7 @@ class Client:
             if transaction[-2] != recreated_hash:
                 is_consistent = False
                 transaction_id = transaction[0]
-                continue
+                break
 
         if is_consistent:
             print("")
@@ -208,6 +207,8 @@ class Client:
             print(f"The blockchain is not consistent! \
                    The error was found on transaction {transaction_id}.\n")
             print("")
+
+        return is_consistent
 
     def commit_to_db(self) -> None:
         """

@@ -12,14 +12,14 @@ from mysql_querys import (
 mydb = mysql.connector.connect(host="localhost", user="root", password="00000000")
 cursor = mydb.cursor()
 
-class DB_Cursor:
+class dB_Cursor:
     """
     A class for interacting with a MySQL database.
 
     Attributes:
         cursor (MySQLCursor): The MySQL cursor object for executing queries.
     """
-    def __init__(self, cursor: mysql.connector.cursor.MySQLCursor) -> None:
+    def __init__(self) -> None:
         """
         Initializes a DB_Cursor object with a given MySQL cursor.
 
@@ -78,11 +78,11 @@ class DB_Cursor:
         """
         self.cursor.execute(QueryToCreateClients)
         for i in range(1, 10):
-            self.cursor.execute(f"INSERT INTO Clients (ID) VALUES (0102030405{str(i)})")
+            self.cursor.execute(f"INSERT INTO Clients (ID,public_key,private_key) VALUES (0102030405{str(i)},'0','proof')")
 
         self.cursor.execute(QueryToCreateTrasactions)
         for i in range(1, 10):
-            self.cursor.execute(f"INSERT INTO Transactions (value,date,client_id) VALUES (9.99, '2000-10-10 22:22:22', {str(i)})")
+            self.cursor.execute(f"INSERT INTO Transactions (value,date,client_id,hash,proof) VALUES (9.99, '2000-10-10 22:22:22', {str(i)},'hash','proof')")
 
         print("Database initiated with data")
 
@@ -128,11 +128,11 @@ class DB_Cursor:
         return cursor.fetchall()[0][0]
 
 
-    def search_keys_from_id(self, ID: str) -> Dict[str, str]:
+    def search_keys_from_id(self, id: str) -> Dict[str, str]:
         """
         Returns the public and private keys for the given client ID.
         """
-        cursor.execute(f"SELECT public_key, private_key FROM Clients WHERE client_id='{ID}'")
+        cursor.execute(f"SELECT public_key, private_key FROM Clients WHERE client_id='{id}'")
         query_payload = cursor.fetchall()[0]
         return {"public": query_payload[0], "private": query_payload[1]}
 
@@ -161,6 +161,19 @@ class DB_Cursor:
         result = cursor.fetchall()
         return result
 
+    def adulterate_transaction(self,transaction_id):
+        query = "UPDATE Transactions SET value = 10000 "
+        query += f"WHERE transaction_id = {transaction_id}"
+        cursor.execute(query)
+        
+
+    def search_transaction_id_for_test(self,client_id):
+        query = "SELECT transaction_id FROM Transactions "
+        query += f"WHERE client_id = {client_id}"
+        query += " ORDER by date DESC LIMIT 10"
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return result[5][0]
 
     def obtain_extract(self, id: int) -> List[tuple]:
         """
