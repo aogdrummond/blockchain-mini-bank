@@ -1,9 +1,10 @@
 # Blockchain Mini Bank
 
-### This software was developed as a practice to integrate different skills aiming to design an ATM's software, responsible for identifying the user and applying the right operations to withdrawn money, deposit money and manages the account. It was then increased to allow real-time consultation of currency exchange rates and application of blockchain algorithms to ensure data consistency
+### This software was developed as a practice to integrate different skills aiming to design an ATM's software, responsible for identifying the user and applying the right operations to withdrawn money, deposit money and manages the account. It was then increased to allow real-time consultation of currency exchange rates and application of blockchain algorithms to ensure data consistency.
 
 ## **Installation**
 
+#### Ps: although it is already tested and validated on Linux system, it still does not run smoothly on Windows.
 ### Make sure you have docker, docker-composed and git installed on your machine by typing in your command prompt: 
 
 &nbsp;
@@ -24,7 +25,7 @@ pip --version
 ### Clone the repository with source code.
 
 ```
-git clone https://github.com/aogdrummond/blockchain_mini_bank.git
+git clone https://github.com/aogdrummond/blockchain-mini-bank.git
 ```
 &nbsp;
 
