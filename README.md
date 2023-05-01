@@ -71,7 +71,7 @@ pip install -r requirements.txt
 ### If you aren't interested on persistance, the file may remain unchanged
 
 &nbsp;
-### Download image and run container.
+### Download image and run container for containerized dB.
 ```
 docker-compose up
 ```
