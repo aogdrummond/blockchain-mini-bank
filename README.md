@@ -24,7 +24,7 @@ pip --version
 ### Clone the repository with source code.
 
 ```
-git clone https://github.com/aogdrummond/blockchain_mini_bank.git
+git clone https://github.com/aogdrummond/blockchain-mini-bank.git
 ```
 &nbsp;
 
