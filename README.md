@@ -8,7 +8,7 @@
 
 &nbsp;
 ```
-python --version
+python3 --version
 docker -v
 docker-compose -v
 git --version
@@ -24,20 +24,20 @@ pip --version
 ### Clone the repository with source code.
 
 ```
-git clone https://github.com/aogdrummond/konv_mini_bank.git
+git clone https://github.com/aogdrummond/blockchain_mini_bank.git
 ```
 &nbsp;
 
 ### Change working directory to app's.
 
 ```
-cd konv_mini_bank
+cd blockchain_mini_bank
 ```
 
 &nbsp;
 ### Create virtual environment.
 ```
-python -m venv konv_bank_venv
+python3 -m venv blockchain_bank_venv
 ```
 &nbsp;
 
@@ -45,9 +45,9 @@ python -m venv konv_bank_venv
 ### Activate the virtual environment.
 
 ```
-konv_bank_venv\Scrips\activate [Windows] 
+. blockchain_bank_venv\Scrips\activate [Windows] 
 or
-konv_bank_venv\bin\activate [Linux/Mac] 
+. blockchain_bank_venv\bin\activate [Linux/Mac] 
 ```
 &nbsp;
 ### Install virtual environment dependencies.
@@ -89,7 +89,7 @@ Tip: To acess the images available on DockerHub you need to be logged in to Dock
 
 * ### If you are interested on using Flask functionality, to get currency exchange rates start running flask_app/view.py application. Otherwise you may skip this phase.
 
-* ### Activate the API through the following command:
+* ### Activate the API through the following command (remember, it must be inside the virtual environment!):
 ```
 python3 flask_app/view.py
 ```
@@ -105,7 +105,7 @@ python3 flask_app/view.py
 * ### To start the application on your console, just run "main.py" file:
 
 ```
-python main.py
+python3 main.py
 ```
 
 * ### To use it just follow the commands in the console, like in the example below: 
@@ -121,12 +121,12 @@ python main.py
 ### Unit tests:.
 
 ```
-python tests\unit_tests.py 
+pytest tests\unit_tests.py 
 ```
 ### Integration tests:.
 
 ```
-python tests\int_tests.py 
+pytest tests\int_tests.py 
 ```
 
 * **Be aware, the automatted tests clean the whole database after execution.**
